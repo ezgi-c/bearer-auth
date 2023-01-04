@@ -1,33 +1,32 @@
 const bcrypt = require('bcrypt');
-const { sequelize } = require('../src/models');
-const { User } = require('../src/auth/models/users-model');
+const { sequelize, AuthUser } = require('../src/models');
 
 describe('Auth Model', () => {
   beforeEach(() => sequelize.sync());
   afterEach(() => sequelize.drop());
 
   it('can create a user', async () => {
-    const user = await User.createWithHashed('david', 'pip1');
-    expect(user.username).toBe('david');
-    expect(bcrypt.compareSync('pip1', user.username));
+    const user = await AuthUser.createWithHashed('ezgi', 'loki1');
+    expect(user.username).toBe('ezgi');
+    expect(bcrypt.compareSync('loki1', user.username));
   });
 
   describe('findUser', () => {
     it('finds valid user', async () => {
-      await User.createWithHashed('david', 'pip1');
-      const user = await User.findLoggedIn('david', 'pip1');
+      await AuthUser.createWithHashed('ezgi', 'loki1');
+      const user = await AuthUser.findLoggedIn('ezgi', 'loki1');
       expect(user).toBeDefined();
     });
 
     it('nulls for invalid password', async () => {
-      await User.createWithHashed('david', 'pip1');
-      const user = await User.findLoggedIn('david', 'badpass');
+      await AuthUser.createWithHashed('ezgi', 'loki1');
+      const user = await AuthUser.findLoggedIn('ezgi', 'badpass');
       expect(user).toBe(null);
     });
 
     it('nulls for missing user', async () => {
-      await User.createWithHashed('david', 'pip1');
-      const user = await User.findLoggedIn('someone', 'pip1');
+      await AuthUser.createWithHashed('ezgi', 'loki1');
+      const user = await AuthUser.findLoggedIn('someone', 'loki1');
       expect(user).toBe(null);
     });
   });

@@ -42,7 +42,7 @@ async function signin(req, res, next) {
     if (user) {
       // res.status(200).send({ username: user.username });
       // Instead of sending back the username, send a JSON Web Token (jwt)
-      const data = { username: user.username }; 
+      const data = { username: user.username };
       const token = jwt.sign(data, TOKEN_SECRET);
       res.send(token);
     } else {

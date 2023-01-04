@@ -1,28 +1,31 @@
-const { server } = require('../src/server');
-const { sequelize } = require('../src/models/index');
+const b64 = require('base-64');
+const { sequelize, AuthUser } = require('../src/models');
+const { signin } = require('../src/auth/router');
 
-const supertest = require('supertest');
 
-const request = supertest(server);
+describe('Auth Routes', () => {
+  it('returns a web token for a sign in route', async () => {
+    // arrange
+    await sequelize.sync();
+    await AuthUser.createWithHashed('ezgi', 'loki1');
 
-beforeEach(() => sequelize.sync());
-afterEach(() => sequelize.drop());
+    // act
+    const req = {
+      header: jest.fn().mockImplementation((header) => {
+        if (header === 'Authorization') {
+          return 'Basic ' + b64.encode('ezgi:loki1');
+        }
+        return '';
+      }),
+    };
+    const res = { send: jest.fn() };
+    const next = jest.fn();
+    await signin(req, res, next);
 
-describe('POST /signup', () => {
-  it('creates a new user', async () => {
-    const res = await request
-      .post('/signup')
-      .send({ username: 'Ezgi', password: 'loki1' });
-    expect(res.status).toEqual(201);
-    expect(res.body).toHaveProperty('username', 'Ezgi');
-  });
-});
-
-describe('POST /signin', () => {
-  it('logs in existing user', async () => {
-    await request.post('/signup').send({ username: 'Ezgi', password: 'loki1' });
-    const res = await request.post('/signin').auth('Ezgi', 'loki1');
-    expect(res.status).toEqual(200);
-    expect(res.body).toHaveProperty('username', 'Ezgi');
+    // assert
+    const token = res.send.mock.lastCall[0];
+    const [_header, payloadBase64, _signature] = token.split('.');
+    const payload = JSON.parse(b64.decode(payloadBase64));
+    expect(payload.username).toBe('ezgi');
   });
 });

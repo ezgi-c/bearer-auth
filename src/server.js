@@ -18,7 +18,6 @@ server.get('/loggedin', checkToken, (req, res) => {
 server.use(notFound);
 server.use(serverError);
 
-
 module.exports = {
   server,
 };

@@ -6,9 +6,9 @@
 
 ### Links and Resources
 
-- [ci/cd](https://github.com/ezgi-c/basic-auth/actions/) (GitHub Actions)
-- [back-end server url](http://xyz.com) (when applicable)
-- [front-end application](http://xyz.com) (when applicable)
+- [ci/cd](https://github.com/ezgi-c/bearer-auth/actions) (GitHub Actions)
+- [back-end server url](https://bearer-auth-ex43.onrender.com) 
+<!-- - [front-end application](http://xyz.com) (when applicable) -->
 
 ### Setup
 
